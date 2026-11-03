@@ -1,0 +1,8 @@
+/bin/
+/dist/
+aurada
+*.exe
+*.test
+*.out
+.cache/
+.DS_Store

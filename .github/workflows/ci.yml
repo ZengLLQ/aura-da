@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Build & Test AuraDA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+      - name: Verify Formatting
+        run: test -z "$(gofmt -s -l .)"
+      - name: Go Vet
+        run: go vet ./...
+      - name: Run Test Suite with Race Detector
+        run: go test -v -race ./...
+      - name: Build CLI Binary
+        run: go build -v -o aurada cmd/aurada/main.go
+      - name: Execute End-to-End CLI Tests
+        run: |
+          ./aurada encode
+          ./aurada sample
+          ./aurada reconstruct
+          ./aurada fraud
